@@ -2,8 +2,13 @@ package restaurantapplication.polina.example.com.simpletodo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -11,53 +16,39 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import java.io.File;
-import java.io.FileInputStream;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import static android.R.id.edit;
 
 public class MainActivity extends AppCompatActivity {
     public static final String NAME = "name";
-    ArrayList<String> items;
-    ArrayAdapter <String> itemsAdapter;
-    ListView lvItems;
+
+    List<Item> items = new ArrayList<>();
+    ItemAdapter adapter;
     EditText etItem;
+    RecyclerView rvItems;
     int requestCode = 2017;
     public static final String ID = "id";
     public static final String EDIT = "edit";
+    DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        lvItems = (ListView) findViewById(R.id.lvItems);
-        items = loadItemsFromFile();
-        itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
-        lvItems.setAdapter(itemsAdapter);
-        lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, EditItem.class);
-                String itemName = items.get(position);
-                intent.putExtra(ID, position);
-                intent.putExtra(NAME, itemName);
-                startActivityForResult(intent, requestCode);
-            }
-        });
+        databaseHelper = new DatabaseHelper(this);
+        rvItems = (RecyclerView) findViewById(R.id.rvItems);
+        items = loadItemsFromDatabase();
+        rvItems.setHasFixedSize(true);
+        rvItems.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ItemAdapter(this, items);
+        rvItems.setAdapter(adapter);
 
-        lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                items.remove(position);
-                itemsAdapter.notifyDataSetChanged();
-                return true;
-            }
-        });
         etItem = (EditText) findViewById(R.id.etNewItem);
         etItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -69,54 +60,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+//todo
 //done
-   public void onAddItem (View v){
-       String newItem = etItem.getText().toString();
-       etItem.setText("");
-       if(!newItem.equals("")){
-           items.add(newItem);
-           itemsAdapter.notifyDataSetChanged();
-       }
-
-   }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-      Boolean saved =  saveListOfItemsToFile(items);
-        System.out.println("Saved to File = "+ saved);
+public void onAddItem (View v){
+    String newItem = etItem.getText().toString();
+    etItem.setText("");
+    if(!newItem.equals("")){
+       Item item  = new Item(newItem, "2017-06-24", 1, 0);
+       int id = databaseHelper.addItem(item);
+        item.setId(id);
+        items.add(item);
+        adapter.notifyDataSetChanged();
     }
 
-    //done
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==this.requestCode&&resultCode==RESULT_OK){
-            String nameChanged = data.getStringExtra(NAME);
-            int position  = data.getIntExtra(ID, -1);
-            if(position<=0) items.set(position, nameChanged);
-            itemsAdapter.notifyDataSetChanged();
-        }
-
-    }
+}
 
 
-// done
-        public  ArrayList<String> loadItemsFromFile() {
 
-            FileInputStream fis;
-            try {
-                fis = openFileInput("data");
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                ArrayList<String> list = (ArrayList<String>) ois.readObject();
-                ois.close();
-                return list;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return new ArrayList<String>();
-            }
-
-
+        public  List<Item> loadItemsFromDatabase() {
+            return databaseHelper.getAllItems();
         }
 
 

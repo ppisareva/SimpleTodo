@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="Done" parent="AppTheme">
+        <item name="android:textColor">@color/colorDoneText</item>
+        <item name="android:background">@color/colorDoneBackground</item>
+    </style>
+
 </resources>
