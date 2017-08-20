@@ -132,6 +132,7 @@ public class EditAddTaskDialogFragment extends DialogFragment {
 
         if(isEdit){
             etName.setText(text);
+            etName.setSelection(etName.getText().length());
             initDataPicker(dpTask, date);
             spTask.setSelection(priority-1);
             cbTask.setChecked(completion==1?true:false);

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303f9f</color>
+    <color name="colorPrimary">#07b495</color>
+    <color name="colorPrimaryDark">#06a488</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorHighPriority">#aaff0000</color>
+    <color name="colorHighPriority">#d0848e</color>
     <color name="colorNoPriority">#aaffffff</color>
     <color name="colorToolBar">#f5ffffff</color>
 
 
-    <color name="colorNormalPriority">#981ac205</color>
-    <color name="colorLowPriority">#abffe100</color>
+    <color name="colorNormalPriority">#c2be7c</color>
+    <color name="colorLowPriority">#84ced0</color>
     <color name="colorDoneBackground">#79767676</color>
     <color name="colorDoneText">#79000000</color>
 </resources>

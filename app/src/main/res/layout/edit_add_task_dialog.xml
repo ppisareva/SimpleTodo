@@ -8,7 +8,8 @@
     <EditText
         android:id="@+id/etNameTaskDialog"
         android:layout_width="match_parent"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -34,21 +35,19 @@
         android:layout_height="wrap_content"
         android:text="@string/priority"
         android:textSize="20dp"
-        android:layout_marginLeft="5dp"
         android:layout_above="@+id/tvCompletion"
         android:layout_alignLeft="@+id/tvCompletion"
-        android:layout_alignStart="@+id/tvCompletion"
-        android:layout_toLeftOf="@+id/spinnerPriority"
-        android:layout_toStartOf="@+id/spinnerPriority" />
+        android:layout_alignStart="@+id/tvCompletion" />
 
-    <Spinner
-        android:id="@+id/spinnerPriority"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/dpTask"
-        android:layout_marginRight="10dp"
-        android:layout_toRightOf="@+id/tvCompletion"
-        android:layout_toEndOf="@+id/tvCompletion" />
+        <Spinner
+            android:id="@+id/spinnerPriority"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_below="@+id/dpTask"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_toEndOf="@+id/tvCompletion"
+            android:layout_toRightOf="@+id/tvCompletion" />
 
     <TextView
         android:id="@+id/tvCompletion"
@@ -66,8 +65,9 @@
         android:id="@+id/cbCompletion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tvCompletion"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/spinnerPriority"
+        android:layout_alignStart="@+id/spinnerPriority" />
     </RelativeLayout>
 
 
