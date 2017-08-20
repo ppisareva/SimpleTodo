@@ -1,101 +1,106 @@
 package restaurantapplication.polina.example.com.simpletodo;
 
-import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.SystemClock;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
-
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
-    public static final String NAME = "name";
+public class MainActivity extends AppCompatActivity  implements EditAddTaskDialogFragment.EditAddTaskDialogListener{
 
-    List<Item> items = new ArrayList<>();
+    List<Task> listTasks = new ArrayList<>();
     ItemAdapter adapter;
-    EditText etItem;
-    RecyclerView rvItems;
-    int requestCode = 2017;
-    public static final String ID = "id";
-    public static final String EDIT = "edit";
+    RecyclerView rvTasks;
     DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        myToolbar.setTitle(R.string.app_new_name);
+        myToolbar.setTitleTextColor(getResources().getColor(R.color.colorToolBar));
+        setSupportActionBar(myToolbar);
         databaseHelper = new DatabaseHelper(this);
-        rvItems = (RecyclerView) findViewById(R.id.rvItems);
-        items = loadItemsFromDatabase();
-        rvItems.setHasFixedSize(true);
-        rvItems.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ItemAdapter(this, items);
-        rvItems.setAdapter(adapter);
-
-        etItem = (EditText) findViewById(R.id.etNewItem);
-        etItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
-            }
-        });
+        rvTasks = (RecyclerView) findViewById(R.id.rvTasks);
+        listTasks = loadItemsFromDatabase();
+        rvTasks.setHasFixedSize(true);
+        rvTasks.setLayoutManager(new LinearLayoutManager(this));
+        registerForContextMenu(rvTasks);
+        adapter = new ItemAdapter(this, listTasks);
+        rvTasks.setAdapter(adapter);
     }
-//todo
-//done
-public void onAddItem (View v){
-    String newItem = etItem.getText().toString();
-    etItem.setText("");
-    if(!newItem.equals("")){
-       Item item  = new Item(newItem, "2017-06-24", 1, 0);
-       int id = databaseHelper.addItem(item);
-        item.setId(id);
-        items.add(item);
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_new_task, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                DialogFragment dialog = new EditAddTaskDialogFragment();
+                dialog.show(getSupportFragmentManager(), getResources().getString(R.string.taskFragment));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int position;
+        Task task;
+        try {
+            position = adapter.getPosition();
+            task = listTasks.get(position);
+        } catch (Exception e) {
+            return super.onContextItemSelected(item);
+        }
+        switch (item.getItemId()) {
+            case ItemAdapter.ItemsHolder.DELETE:
+                databaseHelper.deleteContact(task);
+                listTasks.remove(position);
+                adapter.notifyDataSetChanged();
+                break;
+            case ItemAdapter.ItemsHolder.EDIT:
+                DialogFragment dialog = EditAddTaskDialogFragment.newInstance(task, position);
+                dialog.show(getSupportFragmentManager(), getResources().getString(R.string.taskFragment));
+                break;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    public  List<Task> loadItemsFromDatabase() {
+            return databaseHelper.getAllTasks();
+        }
+
+
+    @Override
+    public void onDialogPositiveClick(Task task, int position) {
+        if(position==-1){
+            listTasks.add(task);
+        } else {
+            listTasks.set(position, task);
+        }
         adapter.notifyDataSetChanged();
     }
 
-}
-
-
-
-        public  List<Item> loadItemsFromDatabase() {
-            return databaseHelper.getAllItems();
-        }
-
-
-        public Boolean saveListOfItemsToFile (ArrayList<String> list){
-            try {
-                FileOutputStream fileOutputStream = openFileOutput("data", Context.MODE_PRIVATE);
-                ObjectOutputStream out = new ObjectOutputStream(fileOutputStream);
-                out.writeObject(list);
-                out.close();
-                fileOutputStream.close();
-                return true;
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-
-        }
-
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        dialog.getDialog().cancel();
+    }
 }

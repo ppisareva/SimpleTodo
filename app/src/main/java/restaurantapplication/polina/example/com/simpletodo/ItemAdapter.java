@@ -1,32 +1,21 @@
 package restaurantapplication.polina.example.com.simpletodo;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
-import static android.R.attr.itemTextAppearance;
-import static android.R.attr.resource;
-import static android.media.CamcorderProfile.get;
-
 /**
  * Created by polina on 8/17/17.
  */
@@ -34,18 +23,22 @@ import static android.media.CamcorderProfile.get;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemsHolder> {
 
     Context context;
-    List <Item> itemsList;
+    List <Task> itemsList;
 
-    public ItemAdapter(@NonNull Context context, @NonNull List<Item> objects) {
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    int position;
+
+    public ItemAdapter(@NonNull Context context, @NonNull List<Task> objects) {
         this.context=context;
         itemsList=objects;
     }
-
-    public Context getContext() {
-        return context;
-    }
-
-
 
     @Override
     public ItemsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -53,17 +46,23 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemsHolder> {
         LayoutInflater inflater = LayoutInflater.from(context);
         View contactView = inflater.inflate(R.layout.task_list_layout, parent, false);
         ItemsHolder viewHolder = new ItemsHolder(contactView);
-
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ItemsHolder holder, int position) {
-        Item item = itemsList.get(position);
-        holder.itemName.setText(item.getTaskName());
-        holder.itemDate.setText(setDate(item.getDueDate()));
-        if(item.isTaskCompletion()==0) {
-            holder.itemLayout.setBackgroundColor(setPriority(item.getTaskPriority()));
+    public void onBindViewHolder(final ItemsHolder holder, final int position) {
+        Task task = itemsList.get(position);
+        holder.itemName.setText(task.getTaskName());
+        holder.itemDate.setText(setDate(task.getDueDate()));
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setPosition(holder.getAdapterPosition());
+                return false;
+            }
+        });
+        if(task.isTaskCompletion()==0) {
+            holder.itemLayout.setBackgroundColor(setPriority(task.getTaskPriority()));
         } else  {
             holder.itemLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDoneBackground));
             holder.itemDate.setTextColor(context.getResources().getColor(R.color.colorDoneText));
@@ -71,7 +70,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemsHolder> {
             holder.itemName.setTextColor(context.getResources().getColor(R.color.colorDoneText));
             holder.itemName.setTypeface(null, Typeface.ITALIC);
         }
+    }
 
+    @Override
+    public void onViewRecycled(ItemsHolder holder) {
+        holder.itemView.setOnLongClickListener(null);
+        super.onViewRecycled(holder);
     }
 
     @Override
@@ -79,30 +83,35 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemsHolder> {
         return itemsList.size();
     }
 
-    class ItemsHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+    class ItemsHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         TextView itemName;
         TextView itemDate;
         LinearLayout itemLayout;
+        public static final int EDIT = 34;
+        public static final int DELETE = 56;
 
         public ItemsHolder(View itemView) {
             super(itemView);
             itemName = (TextView)itemView.findViewById(R.id.taskNameList);
             itemDate = (TextView)itemView.findViewById(R.id.taskDateList);
             itemLayout = (LinearLayout)itemView.findViewById(R.id.taskLayoutList);
-            itemLayout.setOnClickListener(this);
-
+            itemView.setOnCreateContextMenuListener(this);
         }
 
 
-//todo
+
         @Override
-        public void onClick(View v) {
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.add(Menu.NONE, EDIT, Menu.NONE, R.string.action_edit);
+            menu.add(Menu.NONE, DELETE, Menu.NONE, R.string.action_delete);
 
         }
-        }
+    }
+
 
     private String setDate (String dt){
-        DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
         try {
             date = df.parse(dt);
@@ -115,12 +124,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemsHolder> {
 
     private int setPriority(int taskPriority) {
         switch (taskPriority){
-            case 1:
-                return context.getResources().getColor(R.color.colorLowPriority);
-            case 2:
-                return context.getResources().getColor(R.color.colorNormalPriority);
-            case 3:
+            case Task.PRIORITY_HIGH:
                 return context.getResources().getColor(R.color.colorHighPriority);
+            case Task.PRIORITY_NORMAL:
+                return context.getResources().getColor(R.color.colorNormalPriority);
+            case Task.PRIORITY_LOW:
+                return context.getResources().getColor(R.color.colorLowPriority);
         }
         return context.getResources().getColor(R.color.colorNoPriority);
     }

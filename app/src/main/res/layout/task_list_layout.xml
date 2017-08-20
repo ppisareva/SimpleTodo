@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
-    android:layout_marginTop="5dp"
+    android:layout_height="54dp"
+    android:layout_marginTop="1dp"
     android:id="@+id/taskLayoutList"
     android:orientation="horizontal">
 
@@ -13,14 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:text="TextView" />
+        android:textSize="18dp"
+        android:layout_weight="1"/>
 
     <TextView
         android:id="@+id/taskDateList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_weight="3"
-        android:text="12 авг" />
+        android:textSize="18dp"
+        android:layout_weight="3" />
 </LinearLayout>

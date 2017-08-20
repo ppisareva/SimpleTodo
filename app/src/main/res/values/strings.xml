@@ -1,7 +1,22 @@
 <resources>
     <string name="app_name">SimpleTodo</string>
-    <string name="add_new_item">Enter new item</string>
+    <string name="add_new_task">Enter new task</string>
     <string name="add">Add Item</string>
-    <string name="edit_item">Edit Item Below</string>
     <string name="edit">Edit</string>
+    <string name="priority">Priority</string>
+    <string name="completion">Completion</string>
+    <string name="action_edit">edit</string>
+    <string name="action_add">add</string>
+    <string name="action_delete">delete</string>
+    <string name="new_task">New Task</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="app_new_name">My TODO List :)</string>
+    <string name="taskFragment">TaskFragment</string>
+    <string-array name="priority_array">
+        <item>High</item>
+        <item>Normal</item>
+        <item>Low</item>
+    </string-array>
 </resources>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <EditText
+        android:id="@+id/etNameTaskDialog"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="11dp"
+        android:hint="@string/add_new_task"
+      />
+
+    <DatePicker
+        android:id="@+id/dpTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/etNameTaskDialog"
+        android:calendarViewShown="false"
+        android:startYear="2017"
+        android:datePickerMode="spinner" />
+
+    <TextView
+        android:id="@+id/tvPriority"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/priority"
+        android:textSize="20dp"
+        android:layout_marginLeft="5dp"
+        android:layout_above="@+id/tvCompletion"
+        android:layout_alignLeft="@+id/tvCompletion"
+        android:layout_alignStart="@+id/tvCompletion"
+        android:layout_toLeftOf="@+id/spinnerPriority"
+        android:layout_toStartOf="@+id/spinnerPriority" />
+
+    <Spinner
+        android:id="@+id/spinnerPriority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dpTask"
+        android:layout_marginRight="10dp"
+        android:layout_toRightOf="@+id/tvCompletion"
+        android:layout_toEndOf="@+id/tvCompletion" />
+
+    <TextView
+        android:id="@+id/tvCompletion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/completion"
+        android:textSize="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/spinnerPriority"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <CheckBox
+        android:id="@+id/cbCompletion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvCompletion"
+        android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+
+</ScrollView>
