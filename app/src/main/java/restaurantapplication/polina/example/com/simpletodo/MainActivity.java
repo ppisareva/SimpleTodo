@@ -1,5 +1,7 @@
 package restaurantapplication.polina.example.com.simpletodo;
 
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +31,14 @@ public class MainActivity extends AppCompatActivity  implements EditAddTaskDialo
         myToolbar.setTitle(R.string.app_new_name);
         myToolbar.setTitleTextColor(getResources().getColor(R.color.colorToolBar));
         setSupportActionBar(myToolbar);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment dialog = new EditAddTaskDialogFragment();
+                dialog.show(getSupportFragmentManager(), getResources().getString(R.string.taskFragment));
+            }
+        });
         databaseHelper = new DatabaseHelper(this);
         rvTasks = (RecyclerView) findViewById(R.id.rvTasks);
         listTasks = loadItemsFromDatabase();
@@ -35,29 +47,6 @@ public class MainActivity extends AppCompatActivity  implements EditAddTaskDialo
         registerForContextMenu(rvTasks);
         adapter = new ItemAdapter(this, listTasks);
         rvTasks.setAdapter(adapter);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_new_task, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add:
-                DialogFragment dialog = new EditAddTaskDialogFragment();
-                dialog.show(getSupportFragmentManager(), getResources().getString(R.string.taskFragment));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
